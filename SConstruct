@@ -25,21 +25,19 @@ supported_sanitizers = [
 
 # 3rdparty library default versions
 thirdparty_versions = {
-    'libuv':            '1.35.0',
-    'libatomic_ops':    '7.6.10',
-    'libunwind':        '1.2.1',
-    'openfec':          '1.4.2.4',
-    'speexdsp':         '1.2.0',
-    'sox':              '14.4.2',
-    'alsa':             '1.0.29',
-    'pulseaudio':       '5.0',
-    'json':             '0.11-20130402',
-    'ltdl':             '2.4.6',
-    'sndfile':          '1.0.20',
-    'ragel':            '6.10',
-    'gengetopt':        '2.22.6',
-    'cpputest':         '3.6',
-    'google-benchmark': '1.5.0',
+    'libuv':         '1.35.0',
+    'libunwind':     '1.2.1',
+    'libatomic_ops': '7.6.10',
+    'openfec':       '1.4.2.4',
+    'sox':           '14.4.2',
+    'alsa':          '1.0.29',
+    'pulseaudio':    '5.0',
+    'json':          '0.11-20130402',
+    'ltdl':          '2.4.6',
+    'sndfile':       '1.0.20',
+    'ragel':         '6.10',
+    'gengetopt':     '2.22.6',
+    'cpputest':      '3.6',
 }
 
 SCons.SConf.dryrun = 0 # configure even in dry run mode
@@ -661,6 +659,7 @@ else:
             'target_stdio',
             'target_gcc',
             'target_libuv',
+            'target_libatomic_ops',
         ])
         if not has_c11:
             env.Append(ROC_TARGETS=[
@@ -820,8 +819,7 @@ if 'libunwind' in system_dependencies:
 if 'libatomic_ops' in system_dependencies:
     conf = Configure(env, custom_tests=env.CustomTests)
 
-    if not conf.AddPkgConfigDependency('atomic_ops', '--cflags --libs'):
-        conf.env.AddPkgConfigLibs(['atomic_ops'])
+    env.ParsePkgConfig('--cflags --libs atomic_ops')
 
     if not conf.CheckLibWithHeaderExt('atomic_ops', 'atomic_ops.h', 'C', run=not crosscompile):
         env.Die("libatomic_ops not found (see 'config.log' for details)")

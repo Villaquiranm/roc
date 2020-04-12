@@ -9,6 +9,7 @@
 #include <CppUTest/TestHarness.h>
 
 #include "roc_core/atomic.h"
+#include "roc_core/log.h"
 
 namespace roc {
 namespace core {
@@ -20,22 +21,11 @@ TEST(atomic, init_load) {
         Atomic<int> a1(0);
         CHECK(a1 == 0);
 
-        Atomic<int> a2(123);
-        CHECK(a2 == 123);
+    Atomic a2(123);
+    CHECK(a2 == 123);
 
-        Atomic<int> a3(-1);
-        CHECK(a3 == -1);
-    }
-    { // ptr
-        Atomic<int*> a1(NULL);
-        CHECK(a1 == (int*)NULL);
-
-        Atomic<int*> a2((int*)123);
-        CHECK(a2 == (int*)123);
-
-        Atomic<int*> a3((int*)-1);
-        CHECK(a3 == (int*)-1);
-    }
+    Atomic a3(-123);
+    CHECK(a3 == -123);
 }
 
 TEST(atomic, store_load) {
@@ -51,12 +41,11 @@ TEST(atomic, store_load) {
     { // ptr
         Atomic<int*> a(NULL);
 
-        a = (int*)123;
-        CHECK(a == (int*)123);
+    a = 123;
+    CHECK(a == 123);
 
-        a = (int*)456;
-        CHECK(a == (int*)456);
-    }
+    a = -123;
+    CHECK(a == -123);
 }
 
 TEST(atomic, inc_dec) {
@@ -164,9 +153,47 @@ TEST(atomic, compare_exchange) {
         CHECK(!a.compare_exchange((int*)456, (int*)789));
         CHECK(a == (int*)123);
 
-        CHECK(a.compare_exchange((int*)123, (int*)789));
-        CHECK(a == (int*)789);
-    }
+    CHECK(++a == 2);
+    CHECK(a == 2);
+
+    CHECK(--a == 1);
+    CHECK(a == 1);
+
+    CHECK(--a == 0);
+    CHECK(a == 0);
+}
+
+TEST(atomic, add_sub) {
+    Atomic a;
+
+    CHECK((a += 10) == 10);
+    CHECK(a == 10);
+
+    CHECK((a += 10) == 20);
+    CHECK(a == 20);
+
+    CHECK((a -= 30) == -10);
+    CHECK(a == -10);
+
+    CHECK((a -= 10) == -20);
+    CHECK(a == -20);
+}
+
+TEST(atomic, boundaries) {
+    const unsigned long max_ulong = (unsigned long)-1L;
+
+    const long max_long = max_ulong / 2;
+    const long min_long = -max_long - 1;
+
+    Atomic a;
+
+    a = min_long;
+    CHECK(a == min_long);
+    CHECK(--a == max_long);
+
+    a = max_long;
+    CHECK(a == max_long);
+    CHECK(++a == min_long);
 }
 
 } // namespace core

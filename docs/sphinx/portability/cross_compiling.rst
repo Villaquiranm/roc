@@ -166,6 +166,29 @@ Alternatively, you can install the toolchain manually:
 
 .. _aarch64-linux-android:
 
+Android NDK arm64 toolchain
+===========================
+
+`Android NDK <https://developer.android.com/ndk>`_ provides a way to build toolchains for various architectures and Android versions.
+
+The ``aarch64-linux-android`` is an arm64 Android toolchain. There are versions for different Android API levels.
+
+Here is how you can build Roc with this toolchain using `rocproject/cross-aarch64-linux-android <https://hub.docker.com/r/rocproject/cross-aarch64-linux-android/>`_ Docker image:
+
+.. code::
+
+    $ cd /path/to/roc
+    $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
+        rocproject/cross-aarch64-linux-android:api28 \
+          scons \
+            --compiler=clang \
+            --host=aarch64-linux-android \
+            --disable-tools \
+            --disable-examples \
+            --build-3rdparty=libuv,libunwind,libatomic_ops,openfec,cpputest
+
+Alternatively, you can download Android NDK and build the toolchain manually by following `these instructions <https://developer.android.com/ndk/guides/standalone_toolchain>`_.
+
 Debian and Ubuntu toolchains
 ============================
 
