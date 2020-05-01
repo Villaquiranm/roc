@@ -26,6 +26,10 @@ scons -Q --enable-werror --build-3rdparty=all \
       test
 
 scons -Q --enable-werror --build-3rdparty=all \
+      --disable-sox \
+      test
+
+scons -Q --enable-werror --build-3rdparty=all \
       --enable-tests \
       --enable-benchmarks \
       --enable-examples \

@@ -25,19 +25,20 @@ supported_sanitizers = [
 
 # 3rdparty library default versions
 thirdparty_versions = {
-    'libuv':         '1.35.0',
-    'libunwind':     '1.2.1',
-    'libatomic_ops': '7.6.10',
-    'openfec':       '1.4.2.4',
-    'sox':           '14.4.2',
-    'alsa':          '1.0.29',
-    'pulseaudio':    '5.0',
-    'json':          '0.11-20130402',
-    'ltdl':          '2.4.6',
-    'sndfile':       '1.0.20',
-    'ragel':         '6.10',
-    'gengetopt':     '2.22.6',
-    'cpputest':      '3.6',
+    'libuv':            '1.35.0',
+    'libatomic_ops':    '7.6.10',
+    'libunwind':        '1.2.1',
+    'openfec':          '1.4.2.4',
+    'sox':              '14.4.2',
+    'alsa':             '1.0.29',
+    'pulseaudio':       '5.0',
+    'json':             '0.11-20130402',
+    'ltdl':             '2.4.6',
+    'sndfile':          '1.0.20',
+    'ragel':            '6.10',
+    'gengetopt':        '2.22.6',
+    'cpputest':         '3.6',
+    'google-benchmark': '1.5.0',
 }
 
 SCons.SConf.dryrun = 0 # configure even in dry run mode
@@ -709,11 +710,6 @@ else:
             'target_openfec',
         ])
 
-    if not GetOption('disable_speexdsp'):
-        env.Append(ROC_TARGETS=[
-            'target_speexdsp',
-        ])
-
     if not GetOption('disable_tools'):
         if not GetOption('disable_sox'):
             env.Append(ROC_TARGETS=[
@@ -1002,8 +998,8 @@ if 'cpputest' in system_dependencies:
 if 'google-benchmark' in system_dependencies:
     conf = Configure(test_env, custom_tests=env.CustomTests)
 
-    if not conf.AddPkgConfigDependency('benchmark', '--silence-errors --cflags --libs'):
-        conf.env.AddPkgConfigLibs(['benchmark'])
+    if not test_env.ParsePkgConfig('--cflags --libs benchmark'):
+        test_env.AppendUnique(LIBS=['benchmark'])
 
     if not conf.CheckLibWithHeaderExt(
             'benchmark', 'benchmark/benchmark.h', 'CXX', run=not crosscompile):
