@@ -660,7 +660,6 @@ else:
             'target_stdio',
             'target_gcc',
             'target_libuv',
-            'target_libatomic_ops',
         ])
         if not has_c11:
             env.Append(ROC_TARGETS=[

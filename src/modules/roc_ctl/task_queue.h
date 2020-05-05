@@ -147,8 +147,11 @@ public:
         core::nanoseconds_t deadline_;
         core::Seqlock<core::nanoseconds_t> renewed_deadline_;
 
-        core::Atomic<int> renew_in_progress_;
-        core::Atomic<int> wait_in_progress_;
+        // result_ should be set before setting pending_ to false
+        core::Atomic<int> result_;
+        core::Atomic<int> pending_;
+
+        bool request_cancel_;
 
         ICompletionHandler* handler_;
 

@@ -15,7 +15,7 @@
 #include <uv.h>
 
 #include "roc_address/socket_addr.h"
-#include "roc_core/atomic.h"
+#include "roc_core/atomic_int.h"
 #include "roc_core/buffer_pool.h"
 #include "roc_core/iallocator.h"
 #include "roc_core/list.h"
@@ -66,12 +66,12 @@ public:
 
         //! Task state, defines whether task is finished already.
         //! The task becomes immutable after setting state to Finished.
-        core::Atomic<int> state_;
+        core::AtomicInt state_;
 
         //! Task result, defines wether finished task succeeded or failed.
         //! Makes sense only after setting state_ to Finished.
         //! This atomic should be assigned before setting state_ to Finished.
-        core::Atomic<int> success_;
+        core::AtomicInt success_;
 
         core::SharedPtr<BasicPort> port_; //!< On which port the task operates.
 
@@ -238,7 +238,7 @@ private:
     core::List<BasicPort> open_ports_;
     core::List<BasicPort> closing_ports_;
 
-    core::Atomic<int> num_open_ports_;
+    core::AtomicInt num_open_ports_;
 };
 
 } // namespace netio

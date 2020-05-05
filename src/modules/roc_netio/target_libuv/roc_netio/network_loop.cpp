@@ -426,5 +426,48 @@ void NetworkLoop::task_resolve_endpoint_address_(Task& task) {
     task.state_ = Task::Pending;
 }
 
+bool NetworkLoop::async_close_port_(BasicPort& port) {
+    if (!port.async_close()) {
+        return false;
+    }
+
+    closing_ports_.push_back(port);
+    return true;
+}
+
+void NetworkLoop::finish_closing_tasks_(const BasicPort& port) {
+    Task* task = closing_tasks_.front();
+
+    while (task) {
+        Task* next_task = closing_tasks_.nextof(*task);
+
+        if (task->port_.get() == &port) {
+            closing_tasks_.remove(*task);
+            finish_task_(*task);
+        }
+
+        task = next_task;
+    }
+}
+
+void NetworkLoop::finish_task_(Task& task) {
+    ICompletionHandler* handler = task.handler_;
+
+    task.state_ = Task::Finished;
+
+    // if handler is NULL, task may be already destroyed
+
+    if (handler) {
+        handler->network_task_finished(task);
+        // task may be already destroyed
+    } else {
+        task_cond_.broadcast();
+    }
+}
+
+void NetworkLoop::update_num_ports_() {
+    num_open_ports_ = (int)open_ports_.size();
+}
+
 } // namespace netio
 } // namespace roc
