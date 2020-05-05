@@ -8,6 +8,6 @@ scons -Q \
     --disable-tools \
     --enable-tests \
     --enable-benchmarks \
-    --build-3rdparty=libuv,openfec,speexdsp,cpputest,google-benchmark \
+    --build-3rdparty=libuv,openfec,cpputest,google-benchmark \
     --compiler=clang \
     --host=aarch64-linux-android28

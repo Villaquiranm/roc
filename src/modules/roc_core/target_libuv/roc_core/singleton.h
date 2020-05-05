@@ -16,6 +16,7 @@
 
 #include "roc_core/alignment.h"
 #include "roc_core/atomic_ops.h"
+#include "roc_core/errno_to_str.h"
 #include "roc_core/noncopyable.h"
 #include "roc_core/panic.h"
 
@@ -43,8 +44,9 @@ private:
     };
 
     static void create_() {
-        T* inst = new (storage_.mem) T();
-        AtomicOps::store_release(instance_, inst);
+        instance_ = new (storage_.mem) T();
+        AtomicOps::barrier_release();
+        initialized_ = true;
     }
 
     static uv_once_t once_;

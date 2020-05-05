@@ -52,7 +52,7 @@ void Logger::set_colors(ColorsMode colors) {
 void Logger::print(const char* module, LogLevel level, const char* format, ...) {
     Mutex::Lock lock(mutex_);
 
-    if (level > level_ || level == LogNone) {
+    if (level > get_level() || level == LogNone) {
         return;
     }
 

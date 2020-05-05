@@ -76,7 +76,7 @@ public:
 
     //! Get current maximum log level.
     LogLevel get_level() {
-        return (LogLevel)AtomicOps::load_relaxed(level_);
+        return (LogLevel)level_.load_relaxed();
     }
 
     //! Set maximum log level.
@@ -106,7 +106,7 @@ private:
 
     void default_print_(LogLevel level, const char* module, const char* message);
 
-    int level_;
+    Atomic<int> level_;
 
     Mutex mutex_;
 
